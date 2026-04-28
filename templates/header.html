@@ -1,127 +1,88 @@
-<head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
+<nav class="navbar navbar-expand-lg navbar-light fixed-top py-2 py-lg-3" id="mainNav">
+    <div class="container px-3 px-lg-4">
+        <img src="static/assets/img/wfs.jpg" style="width: 130px; transition: all 0.3s;" class="navbar-logo" alt="logo">
 
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
-        <!-- Bootstrap Icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Google fonts-->
-        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css" />
-        <!-- SimpleLightbox plugin CSS-->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="/static/css/styles.css" rel="stylesheet" />
-        <!--Font Awesome-->
-    <script src="https://kit.fontawesome.com/88d274c805.js" crossorigin="anonymous"></script>
-<!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>-->
+        <button class="navbar-toggler" type="button" id="menuToggler" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    </head>
-    <body id="page-top">
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
-            <div class="container px-4 px-lg-5">
-
-                <img src="static/assets/img/wfs.jpg" style="width:10rem;">
-
-<!--                <a class="navbar-brand" href="#page-top">WORKFORCE SAUDIA </a>-->
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#about">خدماتنا</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#services">ماذا نقدم ؟</a></li>
-                        <li class="nav-item"><a class="nav-link" href={{url_for("questions")}}>الأسئلة الشائعة</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">تواصل معنا</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    <script>
-    // حل مستقل تماماً (لا يحتاج Bootstrap JS)
-    (function() {
-        // إنشاء زر القائمة والتحكم به يدوياً
-        function setupMenu() {
-            var toggler = document.querySelector('.navbar-toggler');
-            var menu = document.querySelector('.navbar-collapse');
-
-            if (!toggler || !menu) return;
-
-            // إزالة أي attributes قد تسبب مشكلة
-            toggler.removeAttribute('data-bs-toggle');
-            toggler.removeAttribute('data-bs-target');
-
-            // إضافة مؤشر أن الزر قابل للنقر
-            toggler.style.cursor = 'pointer';
-
-            // إضافة حدث النقر
-            toggler.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                // تبديل القائمة
-                if (menu.style.display === 'block' || menu.classList.contains('show')) {
-                    menu.style.display = 'none';
-                    menu.classList.remove('show');
-                    this.setAttribute('aria-expanded', 'false');
-                } else {
-                    menu.style.display = 'block';
-                    menu.classList.add('show');
-                    this.setAttribute('aria-expanded', 'true');
-                }
-            });
-
-            // إغلاق القائمة عند النقر على رابط
-            var links = document.querySelectorAll('.nav-link');
-            for (var i = 0; i < links.length; i++) {
-                links[i].addEventListener('click', function() {
-                    menu.style.display = 'none';
-                    menu.classList.remove('show');
-                    toggler.setAttribute('aria-expanded', 'false');
-                });
-            }
-
-            // إغلاق القائمة عند النقر خارجها
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 992) {
-                    if (!menu.contains(e.target) && !toggler.contains(e.target)) {
-                        menu.style.display = 'none';
-                        menu.classList.remove('show');
-                        toggler.setAttribute('aria-expanded', 'false');
-                    }
-                }
-            });
-        }
-
-        // تشغيل عند تحميل الصفحة
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setupMenu);
-        } else {
-            setupMenu();
-        }
-    })();
-</script>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                <li class="nav-item"><a class="nav-link" href="#about">خدماتنا</a></li>
+                <li class="nav-item"><a class="nav-link" href="#services">ماذا نقدم ؟</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{url_for('questions')}}">الأسئلة الشائعة</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">تواصل معنا</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <style>
-    /* تأكد من أن القائمة مخفية في البداية على الشاشات الصغيرة */
-    @media (max-width: 992px) {
-        .navbar-collapse {
-            display: none;
+    @media (max-width: 768px) {
+        /* تصغير الشعار */
+        .navbar-logo {
+            width: 100px !important;
         }
-        .navbar-collapse.show {
-            display: block !important;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+
+        /* تصغير المسافة العلوية */
+        .navbar {
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+        }
+
+        /* تحسين القائمة */
+        .navbar-collapse {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            z-index: 1000;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* تصغير الروابط */
+        .navbar-nav .nav-link {
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+        }
+
+        /* تصغير زر القائمة */
+        .navbar-toggler {
+            padding: 5px 8px !important;
+        }
+
+        .navbar-toggler-icon {
+            width: 20px !important;
+            height: 20px !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .navbar-logo {
+            width: 80px !important;
+        }
+
+        .navbar-nav .nav-link {
+            padding: 6px 10px !important;
+            font-size: 12px !important;
+        }
+
+        .navbar-collapse {
+            padding: 8px !important;
         }
     }
 </style>
-    </body>
+
+<script>
+    document.getElementById('menuToggler').addEventListener('click', function() {
+        var menu = document.getElementById('navbarResponsive');
+        if (menu.classList.contains('show')) {
+            menu.classList.remove('show');
+            this.setAttribute('aria-expanded', 'false');
+        } else {
+            menu.classList.add('show');
+            this.setAttribute('aria-expanded', 'true');
+        }
+    });
+</script>
