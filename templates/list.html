@@ -1,78 +1,478 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block title %}Bio Data قائمة العمالة المضافة لقاعدة البيانات{% endblock %}
+{% block title %}قاعدة البيانات - WORKFORCE SAUDIA{% endblock %}
 
 {% block styles %}
 {{super()}}
- <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
-<link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
- <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
-        <link href="https://cdn.datatables.net/buttons/2.1.0/css/buttons.dataTables.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/2.1.0/css/buttons.dataTables.min.css" rel="stylesheet" />
+
+<style>
+    :root {
+        --primary: #0aa39a;
+        --primary-dark: #087f78;
+        --primary-light: #7ed6c9;
+        --dark: #1f2d3d;
+        --gray-bg: #f4fafa;
+        --success: #10b981;
+        --danger: #dc2626;
+        --warning: #f59e0b;
+    }
+
+    body {
+        font-family: 'Cairo', sans-serif;
+        background: var(--gray-bg);
+        color: var(--dark);
+    }
+
+    /* المحتوى الرئيسي */
+    .main-content {
+        padding: 40px 30px;
+        min-height: 100vh;
+    }
+
+    /* عنوان الصفحة */
+    .page-header {
+        text-align: center;
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+    .page-header h2 {
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .page-header::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        margin: 15px auto 0;
+        border-radius: 2px;
+    }
+
+    /* رسائل التنبيه */
+    .alert-custom {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        border: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideDown 0.4s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-success-custom {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+        border-right: 4px solid var(--success);
+    }
+
+    /* حالة عدم وجود بيانات */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-state i {
+        font-size: 80px;
+        color: var(--primary);
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        color: var(--dark);
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    /* تنسيق الجدول */
+    .table-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .table-responsive-custom {
+        overflow-x: auto;
+        padding: 0;
+    }
+
+    .table {
+        margin-bottom: 0;
+        min-width: 900px;
+    }
+
+    .table thead {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+    }
+
+    .table thead th {
+        padding: 18px 15px;
+        font-weight: 700;
+        font-size: 15px;
+        text-align: center;
+        border: none;
+        white-space: nowrap;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table tbody tr:hover {
+        background: #f8fafc;
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .table tbody td {
+        padding: 16px 15px;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 14px;
+        color: #334155;
+    }
+
+    /* أزرار الإجراءات */
+    .actions-group {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        color: white;
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, var(--danger), #b91c1c);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+    }
+
+    .btn-delete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+        color: white;
+    }
+
+    /* شارة العمر */
+    .age-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #e0f2fe;
+        color: #0284c7;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    /* زر العودة */
+    .back-button {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, var(--dark), #1f2d3d);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    /* أيقونات في الجدول */
+    .table tbody td i {
+        margin-left: 6px;
+        font-size: 14px;
+    }
+
+    .nationality-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+
+    /* تنسيق DataTables */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        margin: 15px 20px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 8px 15px;
+        font-family: 'Cairo', sans-serif;
+        margin-right: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 8px 14px;
+        margin: 0 3px;
+        border-radius: 8px;
+        border: none;
+        background: #f1f5f9;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white !important;
+    }
+
+    /* تنسيق متجاوب */
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 20px 15px;
+        }
+
+        .page-header h2 {
+            font-size: 24px;
+        }
+
+        .table thead th,
+        .table tbody td {
+            padding: 12px 10px;
+            font-size: 12px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+    }
+
+    /* شريط التمرير */
+    .table-responsive-custom::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-responsive-custom::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-responsive-custom::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 10px;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 
- {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success" style="text-align:center;" role="alert">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-<br><br>
- <div class="heading1" style="text-align:center;">
-        <h2> Bio Data قائمة العمالة المضافة لقاعدة البيانات</h2>
+<div class="main-content">
+    <div class="container-fluid">
+        <!-- عنوان الصفحة -->
+        <div class="page-header">
+            <h2>
+                <i class="fas fa-database"></i>
+                Bio Data | قائمة العمالة المضافة
+            </h2>
+            <p>إدارة وتعديل وحذف بيانات العمالة في قاعدة البيانات</p>
         </div>
-<br><br>
 
- {% if cvs == []: %}
-    <div class="content">
-        <h3>...لا توجد سير ذاتية مضافة </h3>
-        </div>
-<br>
-        <div class="content">
-<iframe src="https://giphy.com/embed/tXL4FHPSnVJ0A" width="480" height="317" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-            <p><a href="https://giphy.com/gifs/kim-novak-tXL4FHPSnVJ0A"></a></p>
+        <!-- رسائل التنبيه -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-custom alert-success-custom">
+                        <i class="fas fa-check-circle"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- حالة عدم وجود بيانات -->
+        {% if cvs == [] %}
+            <div class="empty-state">
+                <i class="fas fa-database"></i>
+                <h3>لا توجد سير ذاتية مضافة</h3>
+                <iframe src="https://giphy.com/embed/tXL4FHPSnVJ0A" width="380" height="251" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            </div>
+        {% else %}
+            <!-- عرض البيانات في جدول -->
+            <div class="table-container">
+                <div class="table-responsive-custom">
+                    <table class="table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">الإجراءات</th>
+                                <th scope="col">الجنسية</th>
+                                <th scope="col">المهنة</th>
+                                <th scope="col">العمر</th>
+                                <th scope="col">اسم العاملة</th>
+                                <th scope="col">رقم العاملة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cv in cvs %}
+                            <tr>
+                                <td>
+                                    <div class="actions-group">
+                                        <a href="{{url_for('edit', id=cv.id)}}" class="btn-edit">
+                                            <i class="fas fa-edit"></i>
+                                            تعديل
+                                        </a>
+                                        <a href="{{url_for('delete', id=cv.id)}}" class="btn-delete" onclick="return confirm('هل أنت متأكد من حذف هذه العاملة؟')">
+                                            <i class="fas fa-trash-alt"></i>
+                                            حذف
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <i class="fas fa-flag"></i>
+                                    {{cv.nationality}}
+                                </td>
+                                <td>
+                                    <i class="fas fa-briefcase"></i>
+                                    {{cv.review}}
+                                </td>
+                                <td>
+                                    <span class="age-badge">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{cv.rating}} سنة
+                                    </span>
+                                </td>
+                                <td>
+                                    <i class="fas fa-user-circle"></i>
+                                    {{cv.title}}
+                                </td>
+                                <td>
+                                    <i class="fas fa-id-card"></i>
+                                    <strong>{{cv.id}}</strong>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         {% endif %}
+
+        <!-- زر العودة إلى لوحة التحكم -->
+        <div class="back-button">
+            <a href="{{url_for('add')}}" class="btn-back">
+                <i class="fas fa-arrow-right"></i>
+                العودة إلى لوحة التحكم
+            </a>
         </div>
-
-{% for cv in cvs %}
-<table class="table">
-
-    <thead>
-    <tr>
-        <th scope="col" style="text-align:center;">الحالة</th>
-        <th scope="col" style="text-align:center;">الجنسية</th>
-        <th scope="col" style="text-align:center;">المهنة</th>
-        <th scope="col" style="text-align:center;">العمر</th>
-         <th scope="col" style="text-align:center;">اسم العاملة</th>
-         <th scope="col" style="text-align:center;">رقم العاملة</th>
-    </tr>
-
-
-    <tbody>
-    <tr>
-        <td style="text-align:center;"><a href="{{url_for('edit', id=cv.id)}}" class="btn btn-success"> تعديل Edit</a>
-        <a href="{{url_for('delete', id=cv.id)}}" class="btn btn-danger"> حذف Delete</a></td>
-        <td style="text-align:center;">{{cv.nationality}}</td>
-        <td style="text-align:center;">{{cv.review}}</td>
-        <td style="text-align:center;">{{cv.rating}} Years Old </td>
-         <td style="text-align:center;">{{cv.title}}</td>
-        <th scope="row" style="text-align:center;">{{cv.id}}</th>
-    </tr>
-    </tbody>
-</table>
-
-    {% endfor %}
-<br><br>
-
-<div class="content">
-<p class="heading"><a href="{{url_for('add')}}" class="btn btn-dark">العودة إلى لوحة التحكم</a></p>
+    </div>
 </div>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
+{% include "footer.html" %}
 
-{%include "footer.html"%}
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/dataTables.buttons.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // تفعيل DataTables إذا كان هناك بيانات
+        {% if cvs != [] %}
+        $('#dataTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json',
+                search: "بحث:",
+                lengthMenu: "عرض _MENU_ سجل",
+                info: "عرض _START_ إلى _END_ من _TOTAL_ سجل",
+                paginate: {
+                    first: "الأول",
+                    last: "الأخير",
+                    next: "التالي",
+                    previous: "السابق"
+                }
+            },
+            order: [[5, 'desc']], // ترتيب حسب رقم العاملة تنازلياً
+            pageLength: 10,
+            responsive: true
+        });
+        {% endif %}
+    });
+</script>
 {% endblock %}

@@ -1,90 +1,335 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block title %}طلبات الاختيار{% endblock %}
+{% block title %}طلبات الاختيار - WORKFORCE SAUDIA{% endblock %}
 
 {% block styles %}
 {{super()}}
-<link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
- <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+
+<style>
+    :root {
+        --primary: #0aa39a;
+        --primary-dark: #087f78;
+        --primary-light: #7ed6c9;
+        --dark: #1f2d3d;
+        --gray-bg: #f4fafa;
+        --danger: #dc2626;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Cairo', sans-serif;
+        background: var(--gray-bg);
+        color: var(--dark);
+    }
+
+    /* القائمة الجانبية */
+    .sidebar {
+        width: 280px;
+        background: linear-gradient(180deg, #1f2d3d 0%, #15232e 100%);
+        padding: 30px 20px;
+        position: fixed;
+        height: 100%;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        z-index: 1000;
+        right: 0;
+    }
+
+    .sidebar-logo {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(10, 163, 154, 0.3);
+    }
+
+    .sidebar-logo i {
+        font-size: 45px;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+
+    .sidebar h3 {
+        color: var(--primary);
+        margin: 0;
+        font-weight: 800;
+        font-size: 20px;
+    }
+
+    .sidebar p {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        color: #cbd5e1;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .sidebar a i {
+        width: 24px;
+        font-size: 18px;
+    }
+
+    .sidebar a:hover {
+        background: rgba(10, 163, 154, 0.2);
+        color: var(--primary);
+        transform: translateX(-5px);
+    }
+
+    .sidebar hr {
+        margin: 20px 0;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .back-link {
+        background: rgba(10, 163, 154, 0.2);
+        color: var(--primary) !important;
+        justify-content: center;
+    }
+
+    /* المحتوى الرئيسي */
+    .main-content {
+        margin-right: 280px;
+        padding: 30px 40px;
+        min-height: 100vh;
+    }
+
+    /* عنوان الصفحة */
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .page-header h2 {
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-header p {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    /* رسائل التنبيه */
+    .alert-custom {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+        border-right: 4px solid #10b981;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* حالة عدم وجود بيانات */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-state i {
+        font-size: 80px;
+        color: var(--primary);
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    /* الجدول */
+    .table-responsive {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+    }
+
+    .table {
+        margin-bottom: 0;
+        min-width: 1200px;
+    }
+
+    .table thead {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+    }
+
+    .table thead th {
+        padding: 18px 12px;
+        font-weight: 700;
+        font-size: 14px;
+        text-align: center;
+        border: none;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .table tbody td {
+        padding: 15px 12px;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    .btn-reject {
+        background: linear-gradient(135deg, var(--danger), #b91c1c);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-reject:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+        color: white;
+    }
+
+    @media (max-width: 992px) {
+        .sidebar {
+            transform: translateX(100%);
+            width: 260px;
+        }
+
+        .main-content {
+            margin-right: 0;
+            padding: 20px;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 
- {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-success" style="text-align:center;" role="alert">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-<br>
- <div class="heading1" style="text-align:center;">
-        <h2>اختيارات و طلبات العملاء</h2>
-        </div>
+<!-- القائمة الجانبية -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <i class="fas fa-briefcase"></i>
+        <h3>WORKFORCE SAUDIA</h3>
+        <p>طلبات الاختيار</p>
+    </div>
 
-<br><br><br>
- {% if users == []: %}
-    <div class="content">
-        <h3>...لا توجد خيارات للعملاء حتى الآن</h3>
-            </div>
-<br>
-                <div class="content">
-<iframe src="https://giphy.com/embed/QBd2kLB5qDmysEXre9" width="480" height="288" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-            <p><a href="https://giphy.com/gifs/time-mr-bean-look-at-the-QBd2kLB5qDmysEXre9"></a></p>
+    <a href="{{url_for('add')}}">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>لوحة التحكم</span>
+    </a>
 
+    <a href="{{url_for('Dh_list')}}">
+        <i class="fas fa-database"></i>
+        <span>قاعدة البيانات</span>
+    </a>
 
-        {% endif %}
-        </div>
+    <hr>
 
-
-{% for user in users %}
-
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col" style="text-align:center;">حالة الطلب</th>
-        <th scope="col" style="text-align:center;">  الجنسية</th>
-        <th scope="col" style="text-align:center;">  اسم العاملة المختارة</th>
-        <th scope="col" style="text-align:center;">  رقم العاملة </th>
-        <th scope="col" style="text-align:center;">(الصادر)رقم التاشيرة </th>
-        <th scope="col" style="text-align:center;"> رقم الهُوِيَّة أو الإقامة</th>
-        <th scope="col" style="text-align:center;">  رقم الجوال</th>
-        <th scope="col" style="text-align:center;"> اسم العميل</th>
-        <th scope="col" style="text-align:center;">رقم الطلب</th>
-    </tr>
-
-
-    <tbody>
-    <tr>
-<!--        <td style="text-align:center;"> <a href="#" class="btn btn-success">Accept قبول</a>-->
-         <td style="text-align:center;"><a href="{{url_for('reject', users_id=user.id)}}" class="btn btn-danger"> Reject رفض</a></td>
-        <td style="text-align:center;">{{user.bio.nationality}} </td>
-        <td style="text-align:center;">{{user.bio.title}} </td>
-        <td style="text-align:center;">{{user.author_id}} </td>
-        <td style="text-align:center;">{{user.Visa}}</td>
-        <td style="text-align:center;">{{user.Nid}}</td>
-        <td style="text-align:center;">{{user.Contact}} </td>
-        <td style="text-align:center;">{{user.Name}}</td>
-        <th scope="row" style="text-align:center;">{{user.id}}</th>
-    </tr>
-    </tbody>
-</table>
-
-    {% endfor %}
-
-
-
-
-
-
-
-<br><br>
-<div class="content">
-<p class="heading"><a href="{{url_for('add')}}" class="btn btn-dark">العودة إلى لوحة التحكم</a></p>
+    <a href="{{url_for('temp_list')}}" class="back-link">
+        <i class="fas fa-globe"></i>
+        <span>الموقع الرئيسي</span>
+    </a>
 </div>
 
-<br><br><br><br><br><br><br><br><br><br><br>
+<!-- المحتوى الرئيسي -->
+<div class="main-content">
+    <div class="page-header">
+        <h2>
+            <i class="fas fa-clipboard-list"></i> طلبات الاختيار
+        </h2>
+        <p>إدارة طلبات العملاء واختياراتهم</p>
+    </div>
 
-{%include "footer.html"%}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-custom">
+                    <i class="fas fa-check-circle"></i> {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if users == [] %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>لا توجد خيارات للعملاء حتى الآن</h3>
+            <iframe src="https://giphy.com/embed/QBd2kLB5qDmysEXre9" width="380" height="228" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>حالة الطلب</th>
+                        <th>الجنسية</th>
+                        <th>اسم العاملة المختارة</th>
+                        <th>رقم العاملة</th>
+                        <th>رقم التاشيرة</th>
+                        <th>رقم الهوية</th>
+                        <th>رقم الجوال</th>
+                        <th>اسم العميل</th>
+                        <th>رقم الطلب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <a href="{{url_for('reject', users_id=user.id)}}" class="btn-reject">
+                                <i class="fas fa-times"></i> رفض
+                            </a>
+                        </td>
+                        <td>{{user.bio.nationality}}</td>
+                        <td>{{user.bio.title}}</td>
+                        <td>{{user.author_id}}</td>
+                        <td>{{user.Visa}}</td>
+                        <td>{{user.Nid}}</td>
+                        <td>{{user.Contact}}</td>
+                        <td>{{user.Name}}</td>
+                        <td><strong>#{{user.id}}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+
+{% include "footer.html" %}
+
 {% endblock %}

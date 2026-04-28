@@ -3,200 +3,571 @@
 
 {% block styles %}
 {{ super() }}
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-body{
-    font-family:'Cairo', sans-serif;
-    background:#f1f5f9;
-    color:#1e293b;
-}
+    :root {
+        --primary: #0aa39a;
+        --primary-dark: #087f78;
+        --primary-light: #7ed6c9;
+        --dark: #1f2d3d;
+        --gray-bg: #f4fafa;
+    }
 
-.wrapper{
-    display:flex;
-    min-height:100vh;
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-/* Sidebar */
-.sidebar{
-    width:250px;
-    background:#1e293b;
-    padding:25px;
-    position:fixed;
-    height:100%;
-    box-shadow:3px 0 15px rgba(0,0,0,0.1);
-}
+    body {
+        font-family: 'Cairo', sans-serif;
+        background: var(--gray-bg);
+        color: var(--dark);
+        overflow-x: hidden;
+    }
 
-.sidebar h3{
-    color:#38bdf8;
-    margin-bottom:35px;
-    font-weight:700;
-    text-align:center;
-}
+    /* زر القائمة للشاشات الصغيرة */
+    .menu-toggle-btn {
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
 
-.sidebar a{
-    display:block;
-    padding:12px 15px;
-    margin-bottom:10px;
-    border-radius:8px;
-    color:#e2e8f0;
-    text-decoration:none;
-    transition:0.25s;
-    font-size:15px;
-}
+    .menu-toggle-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(10,163,154,0.4);
+    }
 
-.sidebar a:hover{
-    background:#334155;
-    color:#fff;
-}
+    /* طبقة الإخفاء للخلفية عند فتح القائمة */
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+        transition: all 0.3s ease;
+    }
 
-/* Content */
-.main{
-    margin-left:260px;
-    width:100%;
-    padding:40px;
-}
+    .overlay.active {
+        display: block;
+    }
 
-/* Top Bar */
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
-}
+    .wrapper {
+        display: flex;
+        min-height: 100vh;
+    }
 
-.topbar h4{
-    margin:0;
-    font-weight:600;
-}
+    /* القائمة الجانبية */
+    .sidebar {
+        width: 280px;
+        background: linear-gradient(180deg, #1f2d3d 0%, #15232e 100%);
+        padding: 30px 20px;
+        position: fixed;
+        height: 100%;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        z-index: 1000;
+        right: 0;
+    }
 
-/* Stats Cards */
-.stats{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
-    margin-bottom:40px;
-}
+    /* للشاشات الصغيرة */
+    @media (max-width: 992px) {
+        .sidebar {
+            transform: translateX(100%);
+            width: 280px;
+        }
 
-.stat-card{
-    background:#ffffff;
-    padding:25px;
-    border-radius:16px;
-    text-align:center;
-    box-shadow:0 5px 15px rgba(0,0,0,0.08);
-    transition:0.25s;
-}
+        .sidebar.active {
+            transform: translateX(0);
+        }
 
-.stat-card:hover{
-    transform:translateY(-4px);
-}
+        .menu-toggle-btn {
+            display: block;
+        }
 
-.stat-card h2{
-    font-size:36px;
-    margin-bottom:8px;
-    color:#2563eb;
-    font-weight:700;
-}
+        .main {
+            margin-right: 0 !important;
+            padding: 80px 20px 20px 20px !important;
+        }
+    }
 
-.stat-card p{
-    color:#64748b;
-    font-size:14px;
-}
+    /* للشاشات الكبيرة */
+    @media (min-width: 993px) {
+        .main {
+            margin-right: 280px;
+            width: 100%;
+            padding: 30px 40px;
+        }
+    }
 
-/* Form Card */
-.card-dark{
-    background:#ffffff;
-    padding:30px;
-    border-radius:16px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.08);
-}
+    .sidebar-logo {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(10, 163, 154, 0.3);
+    }
 
-.card-dark h3{
-    margin-bottom:20px;
-    font-weight:700;
-    color:#2563eb;
-}
+    .sidebar-logo i {
+        font-size: 45px;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
 
-.small-form{
-max-width:450px;
-margin:0 auto;
+    .sidebar h3 {
+        color: var(--primary);
+        margin: 0;
+        font-weight: 800;
+        font-size: 20px;
+    }
+
+    .sidebar p {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        color: #cbd5e1;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .sidebar a i {
+        width: 24px;
+        font-size: 18px;
+    }
+
+    .sidebar a:hover {
+        background: rgba(10, 163, 154, 0.2);
+        color: var(--primary);
+        transform: translateX(-5px);
+    }
+
+    .sidebar hr {
+        margin: 20px 0;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .logout-btn {
+        background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+        color: white !important;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .logout-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4) !important;
+    }
+
+    /* المحتوى الرئيسي */
+    .main {
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    /* الشريط العلوي */
+    .topbar {
+        background: white;
+        padding: 20px 30px;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .topbar h4 {
+        margin: 0;
+        font-weight: 700;
+        color: var(--dark);
+        font-size: 20px;
+    }
+
+    .topbar h4 i {
+        color: var(--primary);
+        margin-left: 10px;
+    }
+
+    .user-badge {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        padding: 8px 18px;
+        border-radius: 30px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    /* رسائل التنبيه */
+    .alert {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        border: none;
+        font-weight: 600;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+        border-right: 4px solid #10b981;
+    }
+
+    /* بطاقات الإحصائيات */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 30px 25px;
+        border-radius: 24px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(10, 163, 154, 0.15);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(10, 163, 154, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+    }
+
+    .stat-icon i {
+        font-size: 28px;
+        color: var(--primary);
+    }
+
+    .stat-card h2 {
+        font-size: 38px;
+        margin-bottom: 8px;
+        color: var(--primary);
+        font-weight: 800;
+    }
+
+    .stat-card p {
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* بطاقة النموذج */
+    .card-dark {
+        background: white;
+        padding: 35px;
+        border-radius: 24px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-dark h3 {
+        margin-bottom: 25px;
+        font-weight: 800;
+        color: var(--dark);
+        text-align: center;
+        font-size: 24px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .card-dark h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 50%;
+        transform: translateX(50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        border-radius: 3px;
+    }
+
+    .small-form {
+        max-width: 550px;
+        margin: 0 auto;
+    }
+
+    /* تنسيقات النموذج */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 15px;
+        font-family: 'Cairo', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(10, 163, 154, 0.1);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        border: none;
+        width: 100%;
+        padding: 12px 25px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 16px;
+        font-family: 'Cairo', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(10, 163, 154, 0.4);
+    }
+    select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg fill='%230aa39a' height='20' viewBox='0 0 20 20' width='20'%3E%3Cpath d='M5 7l5 5 5-5H5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 10px center;
+    padding-left: 35px;
+    cursor: pointer;
+}
+    select.form-control {
+    display: block;
+    width: 100%;
+}
+    select {
+    appearance: auto !important;
+    -webkit-appearance: auto !important;
 }
 </style>
 {% endblock %}
 
 {% block content %}
 
+<!-- زر القائمة للشاشات الصغيرة -->
+<button class="menu-toggle-btn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- طبقة الإخفاء -->
+<div class="overlay" onclick="closeSidebar()"></div>
+
 <div class="wrapper">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-    <h3>لوحة التحكم</h3>
+    <!-- القائمة الجانبية -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-briefcase"></i>
+            <h3>WORKFORCE SAUDIA</h3>
+            <p>لوحة التحكم</p>
+        </div>
 
-    <a href="{{url_for('selections')}}">📋 طلبات الاختيار</a>
-    <a href="{{url_for('Dh_list')}}">👩‍💼 قاعدة البيانات </a>
-    <a href="{{url_for('temp_list')}}">🌐 الموقع</a>
+        <a href="{{url_for('selections')}}">
+            <i class="fas fa-clipboard-list"></i>
+            <span>📋 طلبات الاختيار</span>
+        </a>
 
-    <hr>
+        <a href="{{url_for('Dh_list')}}">
+            <i class="fas fa-database"></i>
+            <span>👩‍💼 قاعدة البيانات</span>
+        </a>
 
-    <a href="{{url_for('logout')}}" style="background:#dc2626;color:white;text-align:center;">
-        🚪 تسجيل الخروج
-    </a>
-</div>
+        <a href="{{url_for('temp_list')}}">
+            <i class="fas fa-globe"></i>
+            <span>🌐 الموقع</span>
+        </a>
 
-    <!-- Main Content -->
+        <hr>
+
+        <a href="{{url_for('logout')}}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>🚪 تسجيل الخروج</span>
+        </a>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
     <div class="main">
 
         <div class="topbar">
-            <h4>👋 مرحباً {{current_user.name}}</h4>
+            <h4>
+                <i class="fas fa-user-circle"></i>
+                مرحباً {{current_user.name}}
+            </h4>
+            <div class="user-badge">
+                <i class="fas fa-chart-line"></i>
+                لوحة التحكم
+            </div>
         </div>
 
-        <!-- Flash Messages -->
+        <!-- رسائل التنبيه -->
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
-              <div class="alert alert-success text-center">{{ message }}</div>
+              <div class="alert alert-success">
+                  <i class="fas fa-check-circle"></i> {{ message }}
+              </div>
             {% endfor %}
           {% endif %}
         {% endwith %}
 
-        <!-- Statistics -->
-     <div class="stats">
+        <!-- الإحصائيات -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h2>{{ total_temp }}</h2>
+                <p>المعروض في الموقع</p>
+            </div>
 
-    <div class="stat-card">
-        <h2>{{ total_temp }}</h2>
-        <p>المعروض في الموقع</p>
-    </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h2>{{ total_requests }}</h2>
+                <p>العمالة المضافة لقاعدة البيانات</p>
+            </div>
 
-    <div class="stat-card">
-        <h2>{{ total_requests }}</h2>
-        <p>العمالة المضافة لقاعدة البيانات</p>
-    </div>
-       <div class="stat-card">
-        <h2>{{ total_workers }}</h2>
-        <p>طلبات الاختيار</p>
-    </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <h2>{{ total_workers }}</h2>
+                <p>طلبات الاختيار</p>
+            </div>
+        </div>
 
+        <!-- نموذج إضافة عاملة جديدة -->
+        <div class="card-dark">
+            <h3>
+                <i class="fas fa-user-plus"></i> إضافة عاملة جديدة
+            </h3>
+
+            <div class="small-form">
+                {{ wtf.quick_form(
+                    form,
+                    novalidate=True,
+                    action=action,
+                    button_map={'submit':'primary'},
+                    enctype="multipart/form-data"
+                ) }}
+            </div>
+        </div>
+
+    </div>
 
 </div>
 
-        <!-- Add Worker Form -->
-      <div class="card-dark">
-    <h3 class="text-center">إضافة عاملة جديدة</h3>
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.overlay');
 
-    <div class="small-form">
-        {{ wtf.quick_form(
-            form,
-            novalidate=True,
-            action=action,
-            button_map={'submit':'primary'},
-            enctype="multipart/form-data"
-        ) }}
-    </div>
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
 
-</div>
+        // منع التمرير في الخلفية عند فتح القائمة
+        if (sidebar.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
 
-    </div>
+    function closeSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.overlay');
 
-</div>
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // إغلاق القائمة عند تغيير حجم الشاشة إلى كبير
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // إغلاق القائمة عند الضغط على رابط
+    document.querySelectorAll('.sidebar a').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                setTimeout(() => {
+                    closeSidebar();
+                }, 150);
+            }
+        });
+    });
+</script>
+
+
+
 
 {% endblock %}

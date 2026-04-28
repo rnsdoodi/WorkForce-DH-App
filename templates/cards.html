@@ -2,176 +2,407 @@
 <html lang="ar" dir="rtl">
 
 <head>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
 
-<!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>اختيار العمالة - WORKFORCE SAUDIA</title>
 
-<title>اختيار العمالة</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/static/css/bootstrap.css">
+    <style>
+        :root {
+            --primary: #0aa39a;
+            --primary-dark: #087f78;
+            --primary-light: #7ed6c9;
+            --dark: #1f2d3d;
+            --gray-bg: #f4fafa;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
 
-body{
-font-family:'Cairo',sans-serif;
-background:#f5f6fa;
-}
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, var(--gray-bg) 0%, #e8f4f4 100%);
+            direction: rtl;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-.title-section{
-text-align:center;
-margin-bottom:40px;
-}
+        .container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
 
-.title-section h2{
-font-weight:700;
-}
+        /* عنوان الصفحة */
+        .title-section {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
 
-.cards-container{
-display:flex;
-justify-content:center;
-gap:40px;
-flex-wrap:wrap;
-}
+        .title-section h2 {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
 
-.worker-card{
+        .title-section p {
+            color: #64748b;
+            font-size: 16px;
+            position: relative;
+            display: inline-block;
+        }
 
-background:white;
-border-radius:12px;
-width:280px;
-text-align:center;
-padding:25px;
-box-shadow:0 8px 20px rgba(0,0,0,0.08);
-transition:0.3s;
-}
+        .title-section p::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            margin: 10px auto 0;
+            border-radius: 3px;
+        }
 
-.worker-card:hover{
-transform:translateY(-8px);
-box-shadow:0 12px 30px rgba(0,0,0,0.15);
-}
+        /* حاوية البطاقات */
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
 
-.worker-card img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:10px;
-margin-bottom:15px;
-}
+        /* بطاقة العمالة */
+        .worker-card {
+            background: white;
+            border-radius: 24px;
+            width: 300px;
+            text-align: center;
+            padding: 30px 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
 
-.worker-card h3{
-font-weight:700;
-margin-bottom:15px;
-}
+        .worker-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
 
-.enter-btn{
+        .worker-card:hover::before {
+            transform: scaleX(1);
+        }
 
-display:inline-block;
-background:#007bff;
-color:white;
-padding:10px 25px;
-border-radius:6px;
-text-decoration:none;
-transition:0.3s;
-}
+        .worker-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(10, 163, 154, 0.15);
+        }
 
-.enter-btn:hover{
+        /* أيقونة العلم */
+        .flag-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(10, 163, 154, 0.3);
+        }
 
-background:#0056b3;
-color:white;
-}
+        .flag-icon i {
+            font-size: 40px;
+            color: white;
+        }
 
-.back-btn{
+        .worker-card h3 {
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--dark);
+            font-size: 24px;
+        }
 
-margin-top:40px;
-padding:10px 35px;
-border-radius:6px;
-}
+        .worker-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
 
-    html, body{
-height:100%;
-margin:0;
-}
+        .worker-card:hover img {
+            transform: scale(1.02);
+        }
 
-body{
-font-family:'Cairo',sans-serif;
-background:#f5f6fa;
-direction:rtl;
+        /* معلومات إضافية */
+        .worker-info {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
 
-display:flex;
-flex-direction:column;
-min-height:100vh;
-}
+        .worker-info span {
+            display: inline-block;
+            font-size: 13px;
+            color: #64748b;
+            margin: 0 5px;
+        }
 
-.container{
-flex:1;
-}
+        .worker-info i {
+            color: var(--primary);
+            margin-left: 5px;
+        }
 
-</style>
+        /* زر الدخول */
+        .enter-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 12px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 16px;
+            border: none;
+        }
 
+        .enter-btn i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(10, 163, 154, 0.4);
+            color: white;
+        }
+
+        .enter-btn:hover i {
+            transform: translateX(-5px);
+        }
+
+        /* زر العودة */
+        .back-btn {
+            background: linear-gradient(135deg, var(--dark), #1f2d3d);
+            color: white;
+            padding: 12px 35px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            border: none;
+        }
+
+        .back-btn i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .back-btn:hover i {
+            transform: translateX(-5px);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* تنسيق متجاوب */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .title-section h2 {
+                font-size: 28px;
+            }
+
+            .title-section p {
+                font-size: 14px;
+            }
+
+            .cards-container {
+                gap: 25px;
+            }
+
+            .worker-card {
+                width: 280px;
+                padding: 20px;
+            }
+
+            .flag-icon {
+                width: 65px;
+                height: 65px;
+            }
+
+            .flag-icon i {
+                font-size: 32px;
+            }
+
+            .worker-card h3 {
+                font-size: 20px;
+            }
+
+            .worker-card img {
+                height: 170px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .worker-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* تأثير تحميل الصفحة */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .worker-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .worker-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .worker-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+    </style>
 </head>
-
 
 <body>
 
-<section class="container py-5">
+<section class="container py-4">
+    <div class="title-section">
+        <h2>
+            <i class="fas fa-users"></i>
+            مرحباً بكم في WORKFORCE SAUDIA
+        </h2>
+        <p>يرجى اختيار الدولة لعرض العمالة المتاحة</p>
+    </div>
 
-<div class="title-section">
-<h2>مرحباً بكم</h2>
-<p>يرجى اختيار الدولة لعرض العمالة المتاحة</p>
-</div>
+    <div class="cards-container">
+        <!-- الفلبين -->
+        <div class="worker-card">
+<!--            <div class="flag-icon">-->
+<!--                <i class="fas fa-flag"></i>-->
+<!--            </div>-->
+            <h3>الفلبين</h3>
+            <img src="/static/assets/img/F2.jpg" alt="عمالة فلبينية">
+            <div class="worker-info">
+           <span><i class="fas fa-check-circle"></i> عمالة مدربة </span>
+                <span><i class="fas fa-language"></i> سرعة في التعلم</span>
+                <span><i class="fas fa-heart"></i> أمانه</span>
+            </div>
+            <a href="{{url_for('philippines')}}" class="enter-btn">
+                <i class="fas fa-arrow-left"></i>
+                عرض العمالة
+            </a>
+        </div>
 
+        <!-- اثيوبيا -->
+        <div class="worker-card">
+<!--            <div class="flag-icon">-->
+<!--                <i class="fas fa-flag-checkered"></i>-->
+<!--            </div>-->
+            <h3>إثيوبيا</h3>
+            <img src="/static/assets/img/E1.png" alt="عمالة إثيوبية">
+            <div class="worker-info">
+                <span><i class="fas fa-check-circle"></i> عمالة مدربة </span>
+                <span><i class="fas fa-language"></i> سرعة في التعلم</span>
+                <span><i class="fas fa-heart"></i> أمانه</span>
+            </div>
+            <a href="{{url_for('kenya')}}" class="enter-btn">
+                <i class="fas fa-arrow-left"></i>
+                عرض العمالة
+            </a>
+        </div>
+    </div>
 
-<div class="cards-container">
-
-<!-- الفلبين -->
-
-<div class="worker-card">
-
-<h3>الفلبين</h3>
-
-<img src="/static/assets/img/F2.jpg">
-
-<a href="{{url_for('philippines')}}" class="enter-btn">
-الدخول
-</a>
-
-</div>
-
-
-<!-- اثيوبيا -->
-
-<div class="worker-card">
-
-<h3>إثيوبيا</h3>
-
-<img src="/static/assets/img/E1.png">
-
-<a href="{{url_for('kenya')}}" class="enter-btn">
-الدخول
-</a>
-
-</div>
-
-</div>
-
-
-<div class="text-center">
-
-<a href="{{url_for('home')}}" class="btn btn-dark back-btn">
-العودة للصفحة الرئيسية
-</a>
-
-</div>
-
+    <div class="text-center">
+        <a href="{{url_for('home')}}" class="back-btn">
+            <i class="fas fa-home"></i>
+            العودة للصفحة الرئيسية
+        </a>
+    </div>
 </section>
+
 <br>
 <br>
 
-{%include "footer.html"%}
+{% include "footer.html" %}
+
+<script>
+    // إضافة تأثيرات إضافية عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        // إضافة تأثير hover للبطاقات
+        const cards = document.querySelectorAll('.worker-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.4s ease';
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
