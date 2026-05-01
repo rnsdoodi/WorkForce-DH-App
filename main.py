@@ -122,47 +122,15 @@ db.create_all()
 
 # Add Cv Flask Form
 class AddCv(FlaskForm):
-    title = StringField(
-        'worker name اسم العاملة',
-        validators=[DataRequired()],
-        render_kw={"placeholder": "الاسم الثلاثي"}
-    )
-
-    rating = IntegerField(
-        'worker age العمر',
-        validators=[DataRequired()]
-    )
-
-    review = SelectField(
-        'worker position المهنة',
-        choices=[
-            ("housemaid", "عاملة منزلية"),
-            ("nurse", "ممرضة منزلية"),
-            ("babysitter", "مربية / جليسة أطفال"),
-            ("cook", "طباخة"),
-            ("driver", "سائق خاص"),
-            ("worker", "عامل منزلي")
-        ]
-    )
-
-    nationality = SelectField(
-        'Nationality الجنسية',
-        choices=[
-            ("philippines", "Philippines"),
-            ("uganda", "Uganda")
-        ]
-    )
-    img_url = StringField(
-        'worker image الصورة',
-        validators=[DataRequired()]
-    )
-
-    resume = StringField(
-        'CV السيرة الذاتية',
-        validators=[DataRequired()]
-    )
-
+    title = StringField('worker name اسم العاملة', validators=[DataRequired()],render_kw={"placeholder": "الاسم الثلاثي"})
+    rating = IntegerField('worker age العمر', validators=[DataRequired()])
+    review = SelectField('worker position المهنة', choices=["عاملة منزلية", "ممرضة منزلية", "مربية/جليسة أطفال", "طباخة", "سائق خاص", "عامل منزلي"])
+    nationality = SelectField('Nationality الجنسية', choices=["Philippines", "Uganda"])
+    img_url = StringField('worker image الصورة', validators=[DataRequired()])
+    resume = StringField('CV السيرة الذاتية', validators=[DataRequired()])
+    # video = StringField('Video الفيديو ', validators=[DataRequired()])
     submit = SubmitField('Submit / إضافة')
+
 
 # Edit Cv Flask Form
 class EditCv(FlaskForm):
