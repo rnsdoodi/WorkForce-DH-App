@@ -197,6 +197,16 @@
                         <input type="tel" name="phone" class="form-control p-3" placeholder="رقم الجوال" required>
                     </div>
                     <div class="col-12">
+
+                    <select name="request_type" class="form-control p-3" required>
+                        <option value="" disabled selected>اختر نوع الطلب</option>
+                        <option value="complaint">شكوى</option>
+                        <option value="inquiry">استفسار</option>
+                        <option value="suggestion">اقتراح</option>
+                    </select>
+                </div>
+
+                    <div class="col-12">
                         <textarea name="message" class="form-control p-3" rows="4" placeholder="كيف نساعدك؟"></textarea>
                     </div>
                     <div class="col-12 text-center mt-3">
