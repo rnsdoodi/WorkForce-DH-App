@@ -12,6 +12,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
+
 OWN_EMAIL = "rnsdoodi9@gmail.com"
 OWN_PASSWORD = "mhscrjgbtflymwbz"
 
