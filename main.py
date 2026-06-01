@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, jsonify
 import smtplib
+from email.mime.text import MIMEText  # تصحيح: MIMEText (بحروف كبيرة)
+from email.mime.multipart import MIMEMultipart  # تصحيح: MIMEMultipart (بحروف كبيرة)
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -11,10 +13,14 @@ import csv
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from datetime import datetime
 
-
+# إيميلات الإرسال والاستقبال
 OWN_EMAIL = "rnsdoodi9@gmail.com"
-OWN_PASSWORD = "mhscrjgbtflymwbz"
+OWN_PASSWORD = "ooen nmly yifc uioc"
+
+# إضافة بريد إضافي للاستقبال (يمكنك تغييره)
+RECEIVER_EMAIL = "rnsdoodi9@gmail.com"  # البريد الذي ستستلم عليه الرسائل
 
 all_cvs = []
 all_users = []
@@ -22,11 +28,8 @@ all_temps = []
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "any secret key yes")
-####################################################
-
 
 Bootstrap(app)
-###################################################
 
 # Login Manager
 login_manager = LoginManager()
@@ -38,14 +41,7 @@ def load_user(Admin_id):
     return Admins.query.get(int(Admin_id))
 
 
-#################################################
-#################################################
-
-
-# # CREATE DATABASE
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///DH.db")
-# # Optional: But it will silence the deprecation warning in the console.
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# DATABASE SETUP
 db = SQLAlchemy(app)
 
 uri = os.environ.get("DATABASE_URL")
@@ -60,11 +56,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
-###############################################
-###############################################
-
-# CREATE USERS TABLE
-# PARENT
+# CREATE TABLES
 class User(db.Model):
     __tablename__ = "customers1"
     id = db.Column(db.Integer, primary_key=True)
@@ -77,39 +69,29 @@ class User(db.Model):
     resume_id = db.Column(db.Integer, db.ForeignKey('bio_data.id'))
 
 
-# Child
 class BioData(db.Model):
     __tablename__ = "bio_data"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(250), unique=True, nullable=False)  # name
-    rating = db.Column(db.Integer, nullable=False)  # Age
-    review = db.Column(db.String(250), nullable=False)  # type
+    title = db.Column(db.String(250), unique=True, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    review = db.Column(db.String(250), nullable=False)
     nationality = db.Column(db.String(250), nullable=False)
     img_url = db.Column(db.String(1000), nullable=False)
     resume = db.Column(db.String(1000), nullable=False)
-    # video = db.Column(db.String(1000), nullable=False)
     selector = relationship('User', backref='bio')
 
-
-#######################################################################
-# New Table :
 
 class Temp(db.Model):
     __tablename__ = "temp"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(250), unique=True, nullable=False)  # name
-    rating = db.Column(db.Integer, nullable=False)  # Age
-    review = db.Column(db.String(250), nullable=False)  # type
+    title = db.Column(db.String(250), unique=True, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    review = db.Column(db.String(250), nullable=False)
     nationality = db.Column(db.String(250), nullable=False)
     img_url = db.Column(db.String(1000), nullable=False)
     resume = db.Column(db.String(1000), nullable=False)
-    # video = db.Column(db.String(1000), nullable=False)
 
 
-#######################################################################
-
-
-# CREATE TABLE IN DB To save users login Data (Hashed & Salted)
 class Admins(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1000))
@@ -117,31 +99,45 @@ class Admins(UserMixin, db.Model):
     password = db.Column(db.String(250))
 
 
-db.create_all()
+# إضافة جدول جديد لتخزين رسائل الاتصال
+class ContactMessage(db.Model):
+    __tablename__ = "contact_messages"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    email = db.Column(db.String(250), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    request_type = db.Column(db.String(50), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_read = db.Column(db.Boolean, default=False)
 
 
-# Add Cv Flask Form
+# تجنب إعادة إنشاء الجداول إذا كانت موجودة مسبقاً
+with app.app_context():
+    db.create_all()
+
+
+# FORMS
 class AddCv(FlaskForm):
-    title = StringField('worker name اسم العاملة', validators=[DataRequired()],render_kw={"placeholder": "الاسم الثلاثي"})
+    title = StringField('worker name اسم العاملة', validators=[DataRequired()],
+                        render_kw={"placeholder": "الاسم الثلاثي"})
     rating = IntegerField('worker age العمر', validators=[DataRequired()])
-    review = SelectField('worker position المهنة', choices=["عاملة منزلية", "ممرضة منزلية", "مربية/جليسة أطفال", "طباخة", "سائق خاص", "عامل منزلي"])
+    review = SelectField('worker position المهنة',
+                         choices=["عاملة منزلية", "ممرضة منزلية", "مربية/جليسة أطفال", "طباخة", "سائق خاص",
+                                  "عامل منزلي"])
     nationality = SelectField('Nationality الجنسية', choices=["Philippines", "Uganda"])
     img_url = StringField('worker image الصورة', validators=[DataRequired()])
     resume = StringField('CV السيرة الذاتية', validators=[DataRequired()])
-    # video = StringField('Video الفيديو ', validators=[DataRequired()])
     submit = SubmitField('Submit / إضافة')
 
 
-# Edit Cv Flask Form
 class EditCv(FlaskForm):
     title = StringField('worker name اسم العاملة', validators=[DataRequired()])
     rating = StringField('worker age العمر', validators=[DataRequired()])
     review = StringField('worker position المهنة', validators=[DataRequired()])
-    # img_url = StringField('worker image الصورة', validators=[DataRequired(), URL()])
     submit = SubmitField('تعديل')
 
 
-# Select Candidate Form (For Users)
 class Choice(FlaskForm):
     Name = StringField('ادخل الاسم', validators=[DataRequired()])
     Contact = StringField('رقم الجوال', validators=[DataRequired(), length(max=10)])
@@ -151,16 +147,104 @@ class Choice(FlaskForm):
     submit = SubmitField('اختيار')
 
 
-# class Forgot(FlaskForm):
-#     email = StringField('البريد الإلكتروني', validators=[DataRequired()])
-#     submit = SubmitField('تغيير كلمة المرور')
-#
-#
-# class Reset(FlaskForm):
-#     new_password = StringField('كلمة المرور الجديدة')
-#     submit = SubmitField('تغيير كلمة المرور')
+# ========== دالة محسّنة لإرسال الإيميل (مصححة) ==========
+def send_email(name, email, phone, message, request_type="استفسار"):
+    """
+    إرسال إيميل عند ملء نموذج الاتصال
+    """
+    try:
+        # تنسيق الإيميل بشكل احترافي
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        email_body = f"""
+        📧 رسالة جديدة من موقع WORKFORCE SAUDIA
+        ═══════════════════════════════════════
+
+        📅 التاريخ: {current_time}
+
+        👤 معلومات المرسل:
+        ─────────────────────────
+        الاسم: {name}
+        البريد الإلكتروني: {email}
+        رقم الجوال: {phone}
+
+        📋 تفاصيل الرسالة:
+        ─────────────────────────
+        نوع الطلب: {request_type}
+
+        ✉️ نص الرسالة:
+        {message}
+
+        ═══════════════════════════════════════
+        تم الإرسال من نموذج الاتصال في الموقع
+        """
+
+        # إرسال الإيميل باستخدام SMTP
+        with smtplib.SMTP("smtp.gmail.com", 587) as connection:
+            connection.starttls()
+            connection.login(OWN_EMAIL, OWN_PASSWORD)
+
+            # إرسال نسخة نصية
+            connection.sendmail(
+                OWN_EMAIL,
+                RECEIVER_EMAIL,
+                email_body.encode("UTF-8")
+            )
+
+        return True
+
+    except Exception as e:
+        print(f"⚠️ خطأ في إرسال الإيميل: {e}")
+        return False
 
 
+# ========== ROUTE خاص بنموذج الاتصال ==========
+@app.route("/contact", methods=["GET", "POST"])
+def get_data():
+    """
+    استقبال بيانات نموذج الاتصال وإرسالها عبر البريد الإلكتروني
+    """
+    if request.method == "POST":
+        # جلب البيانات من النموذج
+        name = request.form.get("full-name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        message = request.form.get("message", "").strip()
+        request_type = request.form.get("request_type", "استفسار")
+
+        # التحقق من صحة البيانات
+        if not name or not phone or not message:
+            flash("❌ الرجاء ملء جميع الحقول المطلوبة", "error")
+            return redirect(url_for('home') + "#contact")
+
+        # حفظ الرسالة في قاعدة البيانات
+        try:
+            new_message = ContactMessage(
+                name=name,
+                email=email,
+                phone=phone,
+                message=message,
+                request_type=request_type
+            )
+            db.session.add(new_message)
+            db.session.commit()
+        except Exception as e:
+            print(f"⚠️ خطأ في حفظ الرسالة: {e}")
+
+        # إرسال الإيميل
+        email_sent = send_email(name, email, phone, message, request_type)
+
+        if email_sent:
+            flash("✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.", "success")
+        else:
+            flash("⚠️ حدث خطأ في الإرسال. الرجاء المحاولة مرة أخرى أو الاتصال بنا مباشرة.", "error")
+
+        return redirect(url_for('home') + "#contact")
+
+    return redirect(url_for('home'))
+
+
+# ========== باقي Routes الموجودة ==========
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -183,28 +267,6 @@ def kenya():
     return render_template("kenya.html", cvs=all_cvs, temps=all_temps)
 
 
-@app.route("/contact", methods=["GET", "POST"])
-def get_data():
-    if request.method == "POST":
-        name = request.form["full-name"]
-        email = request.form["email"]
-        phone = request.form["phone"]
-        message = request.form["message"]
-
-        send_email(name, email, phone, message)
-
-        return render_template("index.html", msg_sent=True)
-    return render_template("index.html", msg_sent=False)
-
-
-def send_email(name, email, phone, message):
-    email_message = f"Subject:New Message\n\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage:{message}"
-    with smtplib.SMTP("smtp.gmail.com") as connection:
-        connection.starttls()
-        connection.login(OWN_EMAIL, OWN_PASSWORD)
-        connection.sendmail(OWN_EMAIL, OWN_EMAIL, email_message.encode("UTF-8"))
-
-
 @app.route("/add", methods=["GET", "POST"])
 def add():
     form = AddCv()
@@ -221,7 +283,6 @@ def add():
             nationality=form.nationality.data,
             img_url=form.img_url.data,
             resume=form.resume.data,
-            # video=form.video.data
         )
 
         new_cv = BioData(
@@ -231,22 +292,16 @@ def add():
             nationality=form.nationality.data,
             img_url=form.img_url.data,
             resume=form.resume.data,
-            # video=form.video.data
         )
 
         with open("cvs-data.csv", mode="a", encoding="utf8") as csv_file:
             csv_file.write(f"\n{form.title.data},"
                            f"{form.rating.data},"
                            f"{form.review.data},"
-                            f"{form.nationality.data},"
+                           f"{form.nationality.data},"
                            f"{form.img_url.data},"
                            f"{form.resume.data},"
-                           # f"{form.video.data}"
                            )
-
-        # file = form.img_url.data
-        # file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'],
-        #                        secure_filename(file.filename)))
 
         db.session.add(new_cv)
         db.session.add(new_resume)
@@ -265,16 +320,6 @@ def add():
     )
 
 
-#######################################################################################################################
-
-# @app.route("/downloads/tos/")
-# def tos():
-#     workingdir = os.path.abspath(os.getcwd())
-#     filepath = workingdir + '/static/files/'
-#     return send_from_directory(filepath, 'tos.pdf')
-
-
-########################################################################################################################
 @app.route("/edit", methods=["GET", "POST"])
 def edit():
     form = EditCv()
@@ -284,7 +329,6 @@ def edit():
         updated_cv.title = form.title.data
         updated_cv.rating = form.rating.data
         updated_cv.review = form.review.data
-        # updated_cv.img_url = form.img_url.data
         db.session.commit()
         flash("✔ تم تعديل بيانات العاملة بنجاح")
         return redirect(url_for('Dh_list'))
@@ -300,7 +344,6 @@ def temp_edit():
         updated_temp.title = form.title.data
         updated_temp.rating = form.rating.data
         updated_temp.review = form.review.data
-        # updated_cv.img_url = form.img_url.data
         db.session.commit()
         flash("✔ تم تعديل بيانات العاملة بنجاح")
         return redirect(url_for('temp_list'))
@@ -393,7 +436,6 @@ def reject(users_id):
     db.session.delete(user_to_delete)
     db.session.commit()
     flash(" ✔ تم حذف الطلب  ")
-
     return redirect(url_for('selections'))
 
 
@@ -447,14 +489,7 @@ def cancel():
     return send_from_directory('static', filename="files/cancel.jpg")
 
 
-########################################################################################################################
-# Authentication Part for (Admins) :-
-
-
-# @app.route("/")
-# def landing():
-#     return render_template("admin.html")
-
+# Authentication Part for (Admins)
 @app.route('/admins')
 def sign():
     return render_template("main.html")
@@ -463,9 +498,7 @@ def sign():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-
         if Admins.query.filter_by(email=request.form.get('email')).first():
-            # User already exists
             flash("You've already signed up with that email, log in instead!")
             return redirect(url_for('login'))
 
@@ -484,7 +517,6 @@ def register():
         login_user(new_admin)
         flash("تم التسجيل بنجاح, رجاءا قم بالعودة الى صفحة الدخول")
         return redirect(url_for("register"))
-
     return render_template("register.html", logged_in=current_user.is_authenticated)
 
 
@@ -493,9 +525,7 @@ def login():
     if request.method == "POST":
         email = request.form.get('email')
         password = request.form.get('password')
-
         admin = Admins.query.filter_by(email=email).first()
-        # Email doesn't exist or password incorrect.
         if not admin:
             flash("That email does not exist, please try again.")
             return redirect(url_for('login'))
@@ -505,7 +535,6 @@ def login():
         else:
             login_user(admin)
             return redirect(url_for('admin'))
-
     return render_template("login.html", logged_in=current_user.is_authenticated)
 
 
@@ -515,14 +544,12 @@ def logout():
     return redirect(url_for('sign'))
 
 
-@app.route('/add')
+@app.route('/admin')
 @login_required
 def admin():
     print(current_user.name)
-    all_cvs = cvs.query.all()
-    return render_template("add.html", cvs=all_cvs, logged_in=True, name=current_user.name)
+    return render_template("add.html", logged_in=True, name=current_user.name)
 
 
-########################################################################################################################
 if __name__ == "__main__":
     app.run(debug=True)

@@ -11,7 +11,7 @@
 
     <style>
         :root {
-            --primary: #0aa39a; /* لون الشعار */
+            --primary: #0aa39a;
             --dark: #1f2d3d;
             --light-bg: #f4fafa;
             --accent: #7ed6c9;
@@ -22,7 +22,6 @@
             background: var(--light-bg);
         }
 
-        /* Hero */
         .hero {
             background: linear-gradient(135deg, #0aa39a, #087f78);
             min-height: 65vh;
@@ -65,7 +64,6 @@
             color: var(--primary);
         }
 
-        /* Services */
         .service-card {
             background: white;
             border-radius: 18px;
@@ -93,7 +91,6 @@
             color: var(--primary);
         }
 
-        /* Contact */
         .contact-box {
             background: white;
             border-radius: 25px;
@@ -101,7 +98,7 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.05);
         }
 
-        input, textarea {
+        input, textarea, select {
             border-radius: 12px !important;
         }
 
@@ -119,6 +116,33 @@
             color: white;
             font-size: 28px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+
+        /* تنسيق رسائل التنبيه */
+        .alert-custom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            left: 20px;
+            z-index: 9999;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -126,6 +150,19 @@
 <body>
 
 {% include "header.html" %}
+
+<!-- عرض رسائل الفلاش -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show alert-custom" role="alert">
+                <i class="fas {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-triangle' }} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
 <header class="hero text-center">
     <div class="container">
@@ -188,29 +225,38 @@
                 <p class="text-muted">نحن هنا لخدمتك</p>
             </div>
 
+            <!-- التعديلات المهمة هنا -->
             <form action="{{url_for('get_data')}}" method="post">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <input type="text" name="full-name" class="form-control p-3" placeholder="الاسم الكامل" required>
                     </div>
+
+                    <!-- تمت إضافة حقل البريد الإلكتروني (مهم للإرسال) -->
+                    <div class="col-md-6">
+                        <input type="email" name="email" class="form-control p-3" placeholder="البريد الإلكتروني" required>
+                    </div>
+
                     <div class="col-md-6">
                         <input type="tel" name="phone" class="form-control p-3" placeholder="رقم الجوال" required>
                     </div>
-                    <div class="col-12">
 
-                    <select name="request_type" class="form-control p-3" required>
-                        <option value="" disabled selected>اختر نوع الطلب</option>
-                        <option value="complaint">شكوى</option>
-                        <option value="inquiry">استفسار</option>
-                        <option value="suggestion">اقتراح</option>
-                    </select>
-                </div>
-
-                    <div class="col-12">
-                        <textarea name="message" class="form-control p-3" rows="4" placeholder="كيف نساعدك؟"></textarea>
+                    <div class="col-md-6">
+                        <select name="request_type" class="form-control p-3" required>
+                            <option value="" disabled selected>اختر نوع الطلب</option>
+                            <option value="complaint">شكوى</option>
+                            <option value="inquiry">استفسار</option>
+                            <option value="suggestion">اقتراح</option>
+                        </select>
                     </div>
+
+                    <div class="col-12">
+                        <textarea name="message" class="form-control p-3" rows="4" placeholder="كيف نساعدك؟" required></textarea>
+                    </div>
+
                     <div class="col-12 text-center mt-3">
-                        <button type="submit" class="btn-main px-5" disabled>إرسال</button>
+                        <!-- تم إزالة disabled من الزر -->
+                        <button type="submit" class="btn-main px-5">إرسال</button>
                     </div>
                 </div>
             </form>
@@ -225,6 +271,17 @@
 {% include "footer.html" %}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- جافا سكريبت لإخفاء رسائل التنبيه تلقائياً بعد 5 ثواني -->
+<script>
+    setTimeout(function() {
+        var alerts = document.querySelectorAll('.alert-custom');
+        alerts.forEach(function(alert) {
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+</script>
 
 </body>
 </html>
