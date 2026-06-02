@@ -512,24 +512,15 @@
         </div>
 
         <!-- Add New Worker Form -->
-        <div class="card-dark">
-            <h3>
-                <i class="fas fa-user-plus"></i> Add New Worker
-            </h3>
+ <!-- Add New Worker Form -->
+<div class="card-dark">
+    <h3>
+        <i class="fas fa-user-plus"></i> Add New Worker
+    </h3>
 
-            <div class="small-form">
-                {{ wtf.quick_form(
-                    form,
-                    novalidate=True,
-                    action=action,
-                    button_map={'submit':'primary'},
-                    enctype="multipart/form-data"
-                ) }}
-            </div>
-        </div>
-
-    </div>
-
+    <div class="small-form">
+    {{ wtf.quick_form(form) }}
+</div>
 </div>
 
 <script>

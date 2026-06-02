@@ -132,10 +132,10 @@ class AddCv(FlaskForm):
 
 
 class EditCv(FlaskForm):
-    title = StringField('worker name اسم العاملة', validators=[DataRequired()])
-    rating = StringField('worker age العمر', validators=[DataRequired()])
-    review = StringField('worker position المهنة', validators=[DataRequired()])
-    submit = SubmitField('تعديل')
+    title = StringField('Worker Name', validators=[DataRequired()])
+    rating = StringField('Worker Age', validators=[DataRequired()])
+    review = StringField('Worker position', validators=[DataRequired()])
+    submit = SubmitField('Edit')
 
 
 class Choice(FlaskForm):
@@ -255,8 +255,8 @@ def philippines():
 
 @app.route("/kenya")
 def kenya():
-    all_cvs = Temp.query.all()
-    return render_template("kenya.html", cvs=all_cvs, temps=all_temps)
+    all_workers = Temp.query.all()
+    return render_template("kenya.html", cvs=all_workers)
 
 
 @app.route("/add", methods=["GET", "POST"])
@@ -300,7 +300,7 @@ def add():
         db.session.commit()
         all_cvs.append(new_cv)
         all_temps.append(new_resume)
-        flash(" The worker has been successfully added ✔ ")
+        flash("✔!! Worker added successfully")
         return redirect(url_for('add'))
 
     return render_template(
@@ -309,7 +309,8 @@ def add():
         total_workers=total_workers,
         total_temp=total_temp,
         total_requests=total_requests
-    )
+    )  # <--- أزلت action من هنا
+
 
 
 @app.route("/edit", methods=["GET", "POST"])
@@ -537,13 +538,14 @@ def logout():
 
 
 # ========== التعديل المهم هنا - دالة admin المصححة ==========
-@app.route('/admin')
+@app.route('/admin', methods=["GET", "POST"])
 @login_required
 def admin():
-    # إنشاء نموذج AddCv
-    form = AddCv()
+    if request.method == "POST":
+        # إعادة التوجيه إلى دالة add للتعامل مع POST
+        return redirect(url_for('add'))
 
-    # جلب الإحصائيات
+    form = AddCv()
     total_workers = User.query.count()
     total_temp = Temp.query.count()
     total_requests = BioData.query.count()
@@ -551,13 +553,10 @@ def admin():
     return render_template(
         "add.html",
         form=form,
-        logged_in=True,
-        name=current_user.name,
         total_workers=total_workers,
         total_temp=total_temp,
         total_requests=total_requests
     )
-
 
 if __name__ == "__main__":
     app.run(debug=True)
