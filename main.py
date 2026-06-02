@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, jsonify
 import smtplib
-from email.mime.text import MIMEText  # تصحيح: MIMEText (بحروف كبيرة)
-from email.mime.multipart import MIMEMultipart  # تصحيح: MIMEMultipart (بحروف كبيرة)
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -20,7 +20,7 @@ OWN_EMAIL = "rnsdoodi9@gmail.com"
 OWN_PASSWORD = "ooen nmly yifc uioc"
 
 # إضافة بريد إضافي للاستقبال (يمكنك تغييره)
-RECEIVER_EMAIL = "rnsdoodi9@gmail.com"  # البريد الذي ستستلم عليه الرسائل
+RECEIVER_EMAIL = "rnsdoodi9@gmail.com"
 
 all_cvs = []
 all_users = []
@@ -119,16 +119,16 @@ with app.app_context():
 
 # FORMS
 class AddCv(FlaskForm):
-    title = StringField('worker name اسم العاملة', validators=[DataRequired()],
+    title = StringField('Worker Name  ', validators=[DataRequired()],
                         render_kw={"placeholder": "الاسم الثلاثي"})
-    rating = IntegerField('worker age العمر', validators=[DataRequired()])
-    review = SelectField('worker position المهنة',
-                         choices=["عاملة منزلية", "ممرضة منزلية", "مربية/جليسة أطفال", "طباخة", "سائق خاص",
-                                  "عامل منزلي"])
-    nationality = SelectField('Nationality الجنسية', choices=["Philippines", "Uganda"])
-    img_url = StringField('worker image الصورة', validators=[DataRequired()])
-    resume = StringField('CV السيرة الذاتية', validators=[DataRequired()])
-    submit = SubmitField('Submit / إضافة')
+    rating = IntegerField('Worker Age ', validators=[DataRequired()])
+    review = SelectField('Worker Position ',
+                         choices=["Domestic Helper", "Private Nurse ", "Nanny / Baby Sitter", "Kitchen Cook", "Family Driver ",
+                                  "House Boy"])
+    nationality = SelectField('Nationality ', choices=["Philippines", "Uganda"])
+    img_url = StringField('Worker Image ', validators=[DataRequired()])
+    resume = StringField('CV \ Resume  ', validators=[DataRequired()])
+    submit = SubmitField('Submit ')
 
 
 class EditCv(FlaskForm):
@@ -147,13 +147,12 @@ class Choice(FlaskForm):
     submit = SubmitField('اختيار')
 
 
-# ========== دالة محسّنة لإرسال الإيميل (مصححة) ==========
+# ========== دالة محسّنة لإرسال الإيميل ==========
 def send_email(name, email, phone, message, request_type="استفسار"):
     """
     إرسال إيميل عند ملء نموذج الاتصال
     """
     try:
-        # تنسيق الإيميل بشكل احترافي
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         email_body = f"""
@@ -179,12 +178,9 @@ def send_email(name, email, phone, message, request_type="استفسار"):
         تم الإرسال من نموذج الاتصال في الموقع
         """
 
-        # إرسال الإيميل باستخدام SMTP
         with smtplib.SMTP("smtp.gmail.com", 587) as connection:
             connection.starttls()
             connection.login(OWN_EMAIL, OWN_PASSWORD)
-
-            # إرسال نسخة نصية
             connection.sendmail(
                 OWN_EMAIL,
                 RECEIVER_EMAIL,
@@ -205,19 +201,16 @@ def get_data():
     استقبال بيانات نموذج الاتصال وإرسالها عبر البريد الإلكتروني
     """
     if request.method == "POST":
-        # جلب البيانات من النموذج
         name = request.form.get("full-name", "").strip()
         email = request.form.get("email", "").strip()
         phone = request.form.get("phone", "").strip()
         message = request.form.get("message", "").strip()
         request_type = request.form.get("request_type", "استفسار")
 
-        # التحقق من صحة البيانات
         if not name or not phone or not message:
             flash("❌ الرجاء ملء جميع الحقول المطلوبة", "error")
             return redirect(url_for('home') + "#contact")
 
-        # حفظ الرسالة في قاعدة البيانات
         try:
             new_message = ContactMessage(
                 name=name,
@@ -231,7 +224,6 @@ def get_data():
         except Exception as e:
             print(f"⚠️ خطأ في حفظ الرسالة: {e}")
 
-        # إرسال الإيميل
         email_sent = send_email(name, email, phone, message, request_type)
 
         if email_sent:
@@ -244,7 +236,7 @@ def get_data():
     return redirect(url_for('home'))
 
 
-# ========== باقي Routes الموجودة ==========
+# ========== باقي Routes ==========
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -308,7 +300,7 @@ def add():
         db.session.commit()
         all_cvs.append(new_cv)
         all_temps.append(new_resume)
-        flash("✔!! تم إضافة العاملة بنجاح ")
+        flash(" The worker has been successfully added ✔ ")
         return redirect(url_for('add'))
 
     return render_template(
@@ -544,11 +536,27 @@ def logout():
     return redirect(url_for('sign'))
 
 
+# ========== التعديل المهم هنا - دالة admin المصححة ==========
 @app.route('/admin')
 @login_required
 def admin():
-    print(current_user.name)
-    return render_template("add.html", logged_in=True, name=current_user.name)
+    # إنشاء نموذج AddCv
+    form = AddCv()
+
+    # جلب الإحصائيات
+    total_workers = User.query.count()
+    total_temp = Temp.query.count()
+    total_requests = BioData.query.count()
+
+    return render_template(
+        "add.html",
+        form=form,
+        logged_in=True,
+        name=current_user.name,
+        total_workers=total_workers,
+        total_temp=total_temp,
+        total_requests=total_requests
+    )
 
 
 if __name__ == "__main__":

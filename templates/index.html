@@ -22,13 +22,36 @@
             background: var(--light-bg);
         }
 
+        /* Hero section مع خلفية الصورة فقط - بدون اي لون اخضر */
         .hero {
-            background: linear-gradient(135deg, #0aa39a, #087f78);
+            background: url('/static/assets/img/wfs3.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             min-height: 65vh;
             display: flex;
             align-items: center;
             color: white;
             border-bottom: 5px solid #065f5b;
+            position: relative;
+        }
+
+        /* طبقة سوداء خفيفة جداً لضمان وضوح النص (بدون اي لون اخضر) */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2;
         }
 
         .hero h1 {
@@ -44,6 +67,8 @@
             border-radius: 10px;
             transition: 0.3s;
             border: none;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-main:hover {
@@ -57,6 +82,10 @@
             color: white;
             border-radius: 10px;
             padding: 12px 25px;
+            background: transparent;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-outline-custom:hover {
@@ -144,6 +173,12 @@
                 opacity: 1;
             }
         }
+
+        @media (max-width: 768px) {
+            .hero {
+                background-attachment: scroll;
+            }
+        }
     </style>
 </head>
 
@@ -225,14 +260,13 @@
                 <p class="text-muted">نحن هنا لخدمتك</p>
             </div>
 
-            <!-- التعديلات المهمة هنا -->
+            <!-- الفورم بدون أي تغيير - زي ماهو بالضبط -->
             <form action="{{url_for('get_data')}}" method="post">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <input type="text" name="full-name" class="form-control p-3" placeholder="الاسم الكامل" required>
                     </div>
 
-                    <!-- تمت إضافة حقل البريد الإلكتروني (مهم للإرسال) -->
                     <div class="col-md-6">
                         <input type="email" name="email" class="form-control p-3" placeholder="البريد الإلكتروني" required>
                     </div>
@@ -255,7 +289,6 @@
                     </div>
 
                     <div class="col-12 text-center mt-3">
-                        <!-- تم إزالة disabled من الزر -->
                         <button type="submit" class="btn-main px-5">إرسال</button>
                     </div>
                 </div>
@@ -274,7 +307,6 @@
 
 <!-- جافا سكريبت لإخفاء رسائل التنبيه تلقائياً بعد 5 ثواني -->
 <script>
-
     setTimeout(function() {
         var alerts = document.querySelectorAll('.alert-custom');
         alerts.forEach(function(alert) {

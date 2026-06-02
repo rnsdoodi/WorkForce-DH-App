@@ -28,7 +28,7 @@
         overflow-x: hidden;
     }
 
-    /* زر القائمة للشاشات الصغيرة */
+    /* Menu button for small screens */
     .menu-toggle-btn {
         display: none;
         position: fixed;
@@ -52,7 +52,7 @@
         box-shadow: 0 8px 20px rgba(10,163,154,0.4);
     }
 
-    /* طبقة الإخفاء للخلفية عند فتح القائمة */
+    /* Background overlay when menu is open */
     .overlay {
         display: none;
         position: fixed;
@@ -74,7 +74,7 @@
         min-height: 100vh;
     }
 
-    /* القائمة الجانبية */
+    /* Sidebar */
     .sidebar {
         width: 280px;
         background: linear-gradient(180deg, #1f2d3d 0%, #15232e 100%);
@@ -88,7 +88,7 @@
         right: 0;
     }
 
-    /* للشاشات الصغيرة */
+    /* For small screens */
     @media (max-width: 992px) {
         .sidebar {
             transform: translateX(100%);
@@ -109,7 +109,7 @@
         }
     }
 
-    /* للشاشات الكبيرة */
+    /* For large screens */
     @media (min-width: 993px) {
         .main {
             margin-right: 280px;
@@ -186,13 +186,13 @@
         box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4) !important;
     }
 
-    /* المحتوى الرئيسي */
+    /* Main content */
     .main {
         width: 100%;
         transition: all 0.3s ease;
     }
 
-    /* الشريط العلوي */
+    /* Top bar */
     .topbar {
         background: white;
         padding: 20px 30px;
@@ -227,7 +227,7 @@
         font-size: 14px;
     }
 
-    /* رسائل التنبيه */
+    /* Alert messages */
     .alert {
         padding: 15px 20px;
         border-radius: 12px;
@@ -242,7 +242,7 @@
         border-right: 4px solid #10b981;
     }
 
-    /* بطاقات الإحصائيات */
+    /* Statistics cards */
     .stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -306,7 +306,7 @@
         margin: 0;
     }
 
-    /* بطاقة النموذج */
+    /* Form card */
     .card-dark {
         background: white;
         padding: 35px;
@@ -341,7 +341,7 @@
         margin: 0 auto;
     }
 
-    /* تنسيقات النموذج */
+    /* Form styling */
     .form-group {
         margin-bottom: 20px;
     }
@@ -401,8 +401,8 @@
 }
 
     .small-form select {
-    height: 55px;          /* تكبير ارتفاع القائمة */
-    font-size: 16px;       /* تكبير النص */
+    height: 55px;
+    font-size: 16px;
     padding: 10px;
 }
 
@@ -412,65 +412,68 @@
 
 {% block content %}
 
-<!-- زر القائمة للشاشات الصغيرة -->
+<!-- Menu button for small screens -->
 <button class="menu-toggle-btn" onclick="toggleSidebar()">
     <i class="fas fa-bars"></i>
 </button>
 
-<!-- طبقة الإخفاء -->
+<!-- Overlay layer -->
 <div class="overlay" onclick="closeSidebar()"></div>
 
 <div class="wrapper">
 
-    <!-- القائمة الجانبية -->
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <i class="fas fa-briefcase"></i>
             <h3>WORKFORCE SAUDIA</h3>
-            <p>لوحة التحكم</p>
+            <p>Control Panel</p>
         </div>
 
         <a href="{{url_for('selections')}}">
             <i class="fas fa-clipboard-list"></i>
-            <span>📋 طلبات الاختيار</span>
+            <span>Selection Requests</span>
         </a>
 
         <a href="{{url_for('Dh_list')}}">
             <i class="fas fa-database"></i>
-            <span>👩‍💼 قاعدة البيانات</span>
+            <span>Database</span>
         </a>
 
         <a href="{{url_for('temp_list')}}">
             <i class="fas fa-globe"></i>
-            <span>🌐 الموقع</span>
+            <span>Website</span>
         </a>
 
-        <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('register') }}">تسجيل مستخدم جديد</a>
-      </li>
+       <a href="{{ url_for('register') }}">
+            <i class="fas fa-user-plus"></i>
+            <span>Add New User</span>
+        </a>
+
+
 
         <hr>
 
         <a href="{{url_for('logout')}}" class="logout-btn">
             <i class="fas fa-sign-out-alt"></i>
-            <span>🚪 تسجيل الخروج</span>
+            <span>🚪 Logout</span>
         </a>
     </div>
 
-    <!-- المحتوى الرئيسي -->
+    <!-- Main content -->
     <div class="main">
 
         <div class="topbar">
             <h4>
                 <i class="fas fa-user-circle"></i>
-                مرحباً {{current_user.name}}
+                Welcome {{current_user.name}}
             </h4>
             <div class="user-badge">
-                <i class="fas fa-chart-line"></i>لوحة التحكم
+                <i class="fas fa-chart-line"></i>Control Panel
             </div>
         </div>
 
-        <!-- رسائل التنبيه -->
+        <!-- Alert messages -->
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
@@ -481,14 +484,14 @@
           {% endif %}
         {% endwith %}
 
-        <!-- الإحصائيات -->
+        <!-- Statistics -->
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-eye"></i>
                 </div>
                 <h2>{{ total_temp }}</h2>
-                <p>المعروض في الموقع</p>
+                <p>Displayed on Website</p>
             </div>
 
             <div class="stat-card">
@@ -496,7 +499,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <h2>{{ total_requests }}</h2>
-                <p>العمالة المضافة لقاعدة البيانات</p>
+                <p>Workers Added to Database</p>
             </div>
 
             <div class="stat-card">
@@ -504,14 +507,14 @@
                     <i class="fas fa-file-signature"></i>
                 </div>
                 <h2>{{ total_workers }}</h2>
-                <p>طلبات الاختيار</p>
+                <p>Selection Requests</p>
             </div>
         </div>
 
-        <!-- نموذج إضافة عاملة جديدة -->
+        <!-- Add New Worker Form -->
         <div class="card-dark">
             <h3>
-                <i class="fas fa-user-plus"></i> إضافة عاملة جديدة
+                <i class="fas fa-user-plus"></i> Add New Worker
             </h3>
 
             <div class="small-form">
@@ -537,7 +540,7 @@
         sidebar.classList.toggle('active');
         overlay.classList.toggle('active');
 
-        // منع التمرير في الخلفية عند فتح القائمة
+        // Prevent background scrolling when menu is open
         if (sidebar.classList.contains('active')) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -554,7 +557,7 @@
         document.body.style.overflow = '';
     }
 
-    // إغلاق القائمة عند تغيير حجم الشاشة إلى كبير
+    // Close menu when window size changes to large
     window.addEventListener('resize', function() {
         if (window.innerWidth > 992) {
             const sidebar = document.getElementById('sidebar');
@@ -566,7 +569,7 @@
         }
     });
 
-    // إغلاق القائمة عند الضغط على رابط
+    // Close menu when clicking on a link
     document.querySelectorAll('.sidebar a').forEach(link => {
         link.addEventListener('click', function() {
             if (window.innerWidth <= 992) {
@@ -577,8 +580,5 @@
         });
     });
 </script>
-
-
-
 
 {% endblock %}

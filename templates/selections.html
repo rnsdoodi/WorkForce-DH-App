@@ -1,6 +1,6 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block title %}طلبات الاختيار - WORKFORCE SAUDIA{% endblock %}
+{% block title %}Selection Requests - WORKFORCE SAUDIA{% endblock %}
 
 {% block styles %}
 {{super()}}
@@ -30,7 +30,7 @@
         color: var(--dark);
     }
 
-    /* القائمة الجانبية */
+    /* Sidebar */
     .sidebar {
         width: 280px;
         background: linear-gradient(180deg, #1f2d3d 0%, #15232e 100%);
@@ -105,14 +105,14 @@
         justify-content: center;
     }
 
-    /* المحتوى الرئيسي */
+    /* Main content */
     .main-content {
         margin-right: 280px;
         padding: 30px 40px;
         min-height: 100vh;
     }
 
-    /* عنوان الصفحة */
+    /* Page header */
     .page-header {
         text-align: center;
         margin-bottom: 40px;
@@ -132,7 +132,7 @@
         font-size: 14px;
     }
 
-    /* رسائل التنبيه */
+    /* Alert messages */
     .alert-custom {
         padding: 15px 20px;
         border-radius: 12px;
@@ -145,7 +145,7 @@
         gap: 10px;
     }
 
-    /* حالة عدم وجود بيانات */
+    /* Empty state */
     .empty-state {
         text-align: center;
         padding: 60px 20px;
@@ -161,7 +161,7 @@
         opacity: 0.5;
     }
 
-    /* الجدول */
+    /* Table */
     .table-responsive {
         background: white;
         border-radius: 20px;
@@ -239,39 +239,39 @@
 
 {% block content %}
 
-<!-- القائمة الجانبية -->
+<!-- Sidebar -->
 <div class="sidebar">
     <div class="sidebar-logo">
         <i class="fas fa-briefcase"></i>
         <h3>WORKFORCE SAUDIA</h3>
-        <p>طلبات الاختيار</p>
+        <p>Selection Requests</p>
     </div>
 
     <a href="{{url_for('add')}}">
         <i class="fas fa-tachometer-alt"></i>
-        <span>لوحة التحكم</span>
+        <span>Dashboard</span>
     </a>
 
     <a href="{{url_for('Dh_list')}}">
         <i class="fas fa-database"></i>
-        <span>قاعدة البيانات</span>
+        <span>Database</span>
     </a>
 
     <hr>
 
     <a href="{{url_for('temp_list')}}" class="back-link">
         <i class="fas fa-globe"></i>
-        <span>الموقع الرئيسي</span>
+        <span>Main Website</span>
     </a>
 </div>
 
-<!-- المحتوى الرئيسي -->
+<!-- Main content -->
 <div class="main-content">
     <div class="page-header">
         <h2>
-            <i class="fas fa-clipboard-list"></i> طلبات الاختيار
+            <i class="fas fa-clipboard-list"></i> Selection Requests
         </h2>
-        <p>إدارة طلبات العملاء واختياراتهم</p>
+        <p>Manage customer requests and selections</p>
     </div>
 
     {% with messages = get_flashed_messages() %}
@@ -287,7 +287,7 @@
     {% if users == [] %}
         <div class="empty-state">
             <i class="fas fa-inbox"></i>
-            <h3>لا توجد خيارات للعملاء حتى الآن</h3>
+            <h3>No customer selections yet</h3>
             <iframe src="https://giphy.com/embed/QBd2kLB5qDmysEXre9" width="380" height="228" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
         </div>
     {% else %}
@@ -295,15 +295,15 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>حالة الطلب</th>
-                        <th>الجنسية</th>
-                        <th>اسم العاملة المختارة</th>
-                        <th>رقم العاملة</th>
-                        <th>رقم التاشيرة</th>
-                        <th>رقم الهوية</th>
-                        <th>رقم الجوال</th>
-                        <th>اسم العميل</th>
-                        <th>رقم الطلب</th>
+                        <th>Request Status</th>
+                        <th>Nationality</th>
+                        <th>Selected Worker Name</th>
+                        <th>Worker ID</th>
+                        <th>Visa Number</th>
+                        <th>ID Number</th>
+                        <th>Mobile Number</th>
+                        <th>Customer Name</th>
+                        <th>Request Number</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -311,7 +311,7 @@
                     <tr>
                         <td>
                             <a href="{{url_for('reject', users_id=user.id)}}" class="btn-reject">
-                                <i class="fas fa-times"></i> رفض
+                                <i class="fas fa-times"></i> Reject
                             </a>
                         </td>
                         <td>{{user.bio.nationality}}</td>

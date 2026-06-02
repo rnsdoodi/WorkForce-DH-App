@@ -1,6 +1,6 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block title %}العمالة المعروضة - WORKFORCE SAUDIA{% endblock %}
+{% block title %}Displayed Workers - WORKFORCE SAUDIA{% endblock %}
 
 {% block styles %}
 {{super()}}
@@ -29,13 +29,13 @@
         color: var(--dark);
     }
 
-    /* المحتوى الرئيسي */
+    /* Main content */
     .main-content {
         padding: 40px 30px;
         min-height: 100vh;
     }
 
-    /* عنوان الصفحة */
+    /* Page header */
     .page-header {
         text-align: center;
         margin-bottom: 50px;
@@ -67,7 +67,7 @@
         border-radius: 2px;
     }
 
-    /* رسائل التنبيه */
+    /* Alert messages */
     .alert-custom {
         padding: 15px 20px;
         border-radius: 12px;
@@ -97,7 +97,7 @@
         border-right: 4px solid var(--success);
     }
 
-    /* حالة عدم وجود بيانات */
+    /* Empty state */
     .empty-state {
         text-align: center;
         padding: 60px 20px;
@@ -120,7 +120,7 @@
         font-weight: 700;
     }
 
-    /* تنسيق الجدول */
+    /* Table styling */
     .table-container {
         background: white;
         border-radius: 20px;
@@ -172,7 +172,7 @@
         color: #334155;
     }
 
-    /* أزرار الإجراءات */
+    /* Action buttons */
     .actions-group {
         display: flex;
         gap: 8px;
@@ -222,7 +222,7 @@
         color: white;
     }
 
-    /* شارة العمر */
+    /* Age badge */
     .age-badge {
         display: inline-flex;
         align-items: center;
@@ -235,7 +235,7 @@
         font-size: 13px;
     }
 
-    /* شارة عرض في الموقع */
+    /* Display status badge */
     .website-badge {
         display: inline-flex;
         align-items: center;
@@ -248,7 +248,7 @@
         font-weight: 600;
     }
 
-    /* زر العودة */
+    /* Back button */
     .back-button {
         text-align: center;
         margin-top: 20px;
@@ -274,13 +274,13 @@
         color: white;
     }
 
-    /* أيقونات في الجدول */
+    /* Icons in table */
     .table tbody td i {
         margin-left: 6px;
         font-size: 14px;
     }
 
-    /* تنسيق DataTables */
+    /* DataTables styling */
     .dataTables_wrapper .dataTables_length,
     .dataTables_wrapper .dataTables_filter {
         margin: 15px 20px;
@@ -307,7 +307,7 @@
         color: white !important;
     }
 
-    /* تنسيق متجاوب */
+    /* Responsive styling */
     @media (max-width: 768px) {
         .main-content {
             padding: 20px 15px;
@@ -329,7 +329,7 @@
         }
     }
 
-    /* شريط التمرير */
+    /* Scrollbar styling */
     .table-responsive-custom::-webkit-scrollbar {
         height: 8px;
     }
@@ -350,16 +350,16 @@
 
 <div class="main-content">
     <div class="container-fluid">
-        <!-- عنوان الصفحة -->
+        <!-- Page header -->
         <div class="page-header">
             <h2>
                 <i class="fas fa-globe"></i>
-                Temporary | قائمة العمالة المعروضة في الموقع
+                Temporary | List of Workers Displayed on Website
             </h2>
-            <p>إدارة العمالة التي تظهر في الصفحة الرئيسية للموقع</p>
+            <p>Manage workers displayed on the main website page</p>
         </div>
 
-        <!-- رسائل التنبيه -->
+        <!-- Alert messages -->
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
@@ -371,27 +371,27 @@
             {% endif %}
         {% endwith %}
 
-        <!-- حالة عدم وجود بيانات -->
+        <!-- Empty state -->
         {% if temps == [] %}
             <div class="empty-state">
                 <i class="fas fa-globe"></i>
-                <h3>لا توجد سير ذاتية مضافة للموقع</h3>
+                <h3>No resumes added to the website yet</h3>
                 <iframe src="https://giphy.com/embed/tXL4FHPSnVJ0A" width="380" height="251" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
             </div>
         {% else %}
-            <!-- عرض البيانات في جدول -->
+            <!-- Display data in table -->
             <div class="table-container">
                 <div class="table-responsive-custom">
                     <table class="table" id="dataTable">
                         <thead>
                             <tr>
-                                <th scope="col">الإجراءات</th>
-                                <th scope="col">الجنسية</th>
-                                <th scope="col">المهنة</th>
-                                <th scope="col">العمر</th>
-                                <th scope="col">اسم العاملة</th>
-                                <th scope="col">رقم العاملة</th>
-                                <th scope="col">الحالة</th>
+                                <th scope="col">Actions</th>
+                                <th scope="col">Nationality</th>
+                                <th scope="col">Profession</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Worker Name</th>
+                                <th scope="col">Worker ID</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -401,11 +401,11 @@
                                     <div class="actions-group">
                                         <a href="{{url_for('temp_edit', id=temp.id)}}" class="btn-edit">
                                             <i class="fas fa-edit"></i>
-                                            تعديل
+                                            Edit
                                         </a>
-                                        <a href="{{url_for('temp_delete', id=temp.id)}}" class="btn-delete" onclick="return confirm('هل أنت متأكد من حذف هذه العاملة من الموقع؟')">
+                                        <a href="{{url_for('temp_delete', id=temp.id)}}" class="btn-delete" onclick="return confirm('Are you sure you want to delete this worker from the website?')">
                                             <i class="fas fa-trash-alt"></i>
-                                            حذف
+                                            Delete
                                         </a>
                                     </div>
                                 </td>
@@ -420,7 +420,7 @@
                                 <td>
                                     <span class="age-badge">
                                         <i class="fas fa-calendar-alt"></i>
-                                        {{temp.rating}} سنة
+                                        {{temp.rating}} years
                                     </span>
                                 </td>
                                 <td>
@@ -434,7 +434,7 @@
                                 <td>
                                     <span class="website-badge">
                                         <i class="fas fa-check-circle"></i>
-                                        معروض
+                                        Displayed
                                     </span>
                                 </td>
                             </tr>
@@ -445,11 +445,11 @@
             </div>
         {% endif %}
 
-        <!-- زر العودة إلى لوحة التحكم -->
+        <!-- Back to dashboard button -->
         <div class="back-button">
             <a href="{{url_for('add')}}" class="btn-back">
                 <i class="fas fa-arrow-right"></i>
-                العودة إلى لوحة التحكم
+                Back to Dashboard
             </a>
         </div>
     </div>
@@ -467,22 +467,22 @@
 
 <script>
     $(document).ready(function() {
-        // تفعيل DataTables إذا كان هناك بيانات
+        // Activate DataTables if there is data
         {% if temps != [] %}
         $('#dataTable').DataTable({
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json',
-                search: "بحث:",
-                lengthMenu: "عرض _MENU_ سجل",
-                info: "عرض _START_ إلى _END_ من _TOTAL_ سجل",
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/en.json',
+                search: "Search:",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
                 paginate: {
-                    first: "الأول",
-                    last: "الأخير",
-                    next: "التالي",
-                    previous: "السابق"
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
                 }
             },
-            order: [[5, 'desc']], // ترتيب حسب رقم العاملة تنازلياً
+            order: [[5, 'desc']], // Sort by Worker ID descending
             pageLength: 10,
             responsive: true
         });
